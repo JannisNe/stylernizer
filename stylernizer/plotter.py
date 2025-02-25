@@ -72,7 +72,7 @@ class Plotter:
             style_name = [style_name]
         styles = []
         if cls.base_style:
-            styles.extend(cls.base_style)
+            styles.append(cls.base_style)
         if style_name:
             styles.extend(style_name)
 
