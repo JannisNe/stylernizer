@@ -20,7 +20,7 @@ pip install git@github.com:JannisNe/stylernizer.git
 
 ## Usage
 
-`stylerizer` is a tool to make plots for a large project with a unified style using a simple command line interface. For the following examples, we assume that you have a project with a structure like this:
+`stylernizer` is a tool to make plots for a large project with a unified style using a simple command line interface. For the following examples, we assume that you have a project with a structure like this:
 
 ```
     project
@@ -35,11 +35,11 @@ pip install git@github.com:JannisNe/stylernizer.git
         └── fullpage.mplstyle
 ```
 
-If you have not run `stylerizer` for your plots yet, you need to register your plots first following steps 1 and 2 before producing the plots in step 3. After that, you can skip step 1 and 2 and directly produce the plots.
+If you have not run `stylernizer` for your plots yet, you need to register your plots first following steps 1 and 2 before producing the plots in step 3. After that, you can skip step 1 and 2 and directly produce the plots.
 
 ### 1. Decorate the plotting functions with the `register` decorator.
 
-`stylerizer` works with any plotting function that returns a `matplotlib` figure. The only requirement is that the function is registered with `stylerizer` using the `register` decorator.
+`stylernizer` works with any plotting function that returns a `matplotlib` figure. The only requirement is that the function is registered with `stylernizer` using the `register` decorator.
 
 For example, to register a plot in `plot1.py`:
 
