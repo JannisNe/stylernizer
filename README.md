@@ -34,6 +34,9 @@ pip install git@github.com:JannisNe/stylernizer.git
         ├── base.mplstyle
         └── fullpage.mplstyle
 ```
+
+If you have not run `stylerizer` for your plots yet, you need to register your plots first following steps 1 and 2 before producing the plots in step 3. After that, you can skip step 1 and 2 and directly produce the plots.
+
 ### 1. Decorate the plotting functions with the `register` decorator.
 
 `stylerizer` works with any plotting function that returns a `matplotlib` figure. The only requirement is that the function is registered with `stylerizer` using the `register` decorator.
