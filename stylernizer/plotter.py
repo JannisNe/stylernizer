@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from pathlib import Path
@@ -19,8 +20,14 @@ logger = logging.getLogger(__name__)
 class Plotter:
 
     registry = {}
+    registered_modules = []
     output_directory: Path = (
         Path(os.environ.get("STYLERNIZER_OUTPUT", "~/stylernizer"))
+        .expanduser()
+        .resolve()
+    )
+    cache_file: Path = (
+        Path(os.environ.get("STYLERNIZER_CACHE", "~/.stylernizer"))
         .expanduser()
         .resolve()
     )
@@ -29,6 +36,22 @@ class Plotter:
     def __init__(self):
         logger.debug(f"using directory {self.output_directory}")
         self.output_directory.mkdir(exist_ok=True)
+        logger.debug(f"using cache directory {self.cache_file}")
+        self.load_cache()
+
+    def load_cache(self):
+        if self.cache_file.exists():
+            self.registered_modules = json.loads(self.cache_file.read_text())
+            for m in self.registered_modules:
+                logger.debug(f"importing module {m}")
+                try:
+                    __import__(m)
+                except ImportError:
+                    logger.error(f"could not import module {m}")
+
+    def dump_cache(self):
+        self.cache_file.write_text(json.dumps(self.registered_modules))
+        logger.debug(f"dumped cache to {self.cache_file}")
 
     @classmethod
     def register(
@@ -46,6 +69,11 @@ class Plotter:
             styles.extend(style_name)
 
         def plot_function_with_style(f):
+
+            if not hasattr(f, "__module__"):
+                raise ValueError("Function does not have a module name")
+            if f.__module__ not in cls.registered_modules:
+                cls.registered_modules.append(f.__module__)
 
             def wrapper(*args, **kwargs):
                 logger.debug(f"using styles {styles}")

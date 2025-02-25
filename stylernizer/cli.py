@@ -11,6 +11,9 @@ from stylernizer.plotter import Plotter
 logger = logging.getLogger(__name__)
 
 
+app = typer.Typer()
+
+
 def walk_modules(
     names: list[str], the_tree: tree.Tree, length: int, parent: str = "", level: int = 0
 ):
@@ -43,12 +46,13 @@ def walk_modules(
 
 
 def get_tree(name: list[str] | None = None) -> tree.Tree:
+    plotter = Plotter()
     if name is not None:
         names = [
-            k for k in Plotter.registry.keys() if any([iname in k for iname in name])
+            k for k in plotter.registry.keys() if any([iname in k for iname in name])
         ]
     else:
-        names = Plotter.registry.keys()
+        names = plotter.registry.keys()
     logger.debug(f"listing plots: {names}")
     length = max(
         [4 * (n.split(":")[0].count(".") + 1) + 2 + len(n.split(":")[1]) for n in names]
@@ -61,38 +65,62 @@ def get_tree(name: list[str] | None = None) -> tree.Tree:
     return _tree
 
 
+@app.command()
+def register(
+    name: Annotated[
+        list[str], typer.Argument(help="Names(s) of the packages/modules to register")
+    ],
+    log_level: Annotated[str, typer.Option("--log-level", "-l")] = "INFO",
+):
+    logging.getLogger("stylernizer").setLevel(log_level.upper())
+    for n in name:
+        logger.info(f"registering {n}")
+        __import__(n)
+    plotter = Plotter()
+    logger.info(f"registered {len(plotter.registry)} plots")
+    _tree = get_tree()
+    console.Console().print(_tree, new_line_start=True)
+    plotter.dump_cache()
+    typer.Exit()
+
+
+@app.command(name="list")
+def list_available_plots(
+    log_level: Annotated[str, typer.Option("--log-level", "-l")] = "INFO",
+    name: Annotated[
+        Optional[list[str]],
+        typer.Argument(
+            help="Names(s) of the plots to make",
+        ),
+    ] = None,
+):
+    logging.getLogger("stylernizer").setLevel(log_level.upper())
+    _tree = get_tree(name)
+    console.Console().print(_tree, new_line_start=True)
+    typer.Exit()
+
+
+@app.command()
 def run(
     log_level: Annotated[str, typer.Option("--log-level", "-l")] = "INFO",
     name: Annotated[
         Optional[list[str]],
         typer.Argument(
             help="Names(s) of the plots to make",
-            autocompletion=lambda: list(Plotter.registry.keys),
         ),
     ] = None,
     save: bool = True,
     show: bool = False,
-    list_plots: Annotated[
-        bool,
-        typer.Option(
-            "--list", "-L", is_flag=True, help="list available plots and exit"
-        ),
-    ] = False,
 ):
     logging.getLogger("stylernizer").setLevel(log_level.upper())
     plotter = Plotter()
-
-    if list_plots:
-        _tree = get_tree(name)
-        console.Console().print(_tree, new_line_start=True)
-        raise typer.Exit()
-
     plotter.plot(name=name, save=save, show=show)
+    typer.Exit()
 
 
 def main():
-    typer.run(run)
+    app()
 
 
 if __name__ == "__main__":
-    main()
+    app()
