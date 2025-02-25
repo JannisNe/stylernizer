@@ -1,0 +1,28 @@
+[project]
+name = "stylernizer"
+version = "0.1.0"
+description = "Organize your plots within a large project and unify plotting style"
+authors = [
+    {name = "Jannis Necker",email = "jannis.necker@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "rich (>=13.9.4,<14.0.0)",
+    "matplotlib (>=3.10.0,<4.0.0)",
+    "numpy (>=2.2.3,<3.0.0)",
+    "typer (>=0.15.1,<0.16.0)",
+]
+
+[projects.scripts]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+isort = "^6.0.0"
+
