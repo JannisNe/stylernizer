@@ -87,6 +87,13 @@ The latter will match all keys starting with `project.topic1.topic1_1`.
 
 You can find the plot in the output directory under `project_topic1_topic1_1_my_plot.pdf`.
 
+### 4. List all available plots.
+
+To list all available plots:
+```bash
+stylernizer list
+```
+
 ## Configuration
 
 `stylernizer` uses environment variables to configure the output directory and the style of the plots.
