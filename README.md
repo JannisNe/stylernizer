@@ -8,7 +8,7 @@ Make plots for a large project like a thesis with a unified style using a simple
 The idea of `stylernizer` is that your project structure follows a topic tree as shown below. To get rid of redundant plot filenames and module and function names, `stylernizer` saves the produced plots under a filename compiled from the topic tree and the function name. This way, you can easily find the plot you are looking for and keep your project organized. 
 
 ### Styles
-`stylernizer` uses `matplotlib` styles to define the appearance of the plots. You can define a base style for all plots and additional styles for specific cases such as full page plots, margin plots, etc. This way, you can easily change the appearance of all plots in your project by changing the base style.
+`stylernizer` uses `matplotlib` styles to define the appearance of the plots (see [this documentation](https://matplotlib.org/stable/users/explain/customizing.html#defining-your-own-style) for more info on style sheets). You can define a base style for all plots and additional styles for specific cases such as full page plots, margin plots, etc. This way, you can easily change the appearance of all plots in your project by changing the base style.
 
 ## Installation
 
