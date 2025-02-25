@@ -23,12 +23,12 @@ class Plotter:
     registered_modules = []
     registered_plots = []
     output_directory: Path = (
-        Path(os.environ.get("STYLERNIZER_OUTPUT", "~/stylernizer"))
+        Path(os.environ.get("STYLERNIZER_OUTPUT", "./stylernizer"))
         .expanduser()
         .resolve()
     )
     cache_file: Path = (
-        Path(os.environ.get("STYLERNIZER_CACHE", "~/.stylernizer"))
+        Path(os.environ.get("STYLERNIZER_CACHE", "./.stylernizer"))
         .expanduser()
         .resolve()
     )
