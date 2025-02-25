@@ -1,6 +1,14 @@
 # Stylernizer
 
-Make plots for a large project with a unified style using a simple command line interface. No more fiddling with matplotlib styles in every plot script. No more unversionable jupyter notebooks.
+Make plots for a large project like a thesis with a unified style using a simple command line interface. No more fiddling with matplotlib styles in every plot script. No more unversionable jupyter notebooks.
+
+## Concepts
+
+### File Structure
+The idea of `stylernizer` is that your project structure follows a topic tree as shown below. To get rid of redundant plot filenames and module and function names, `stylernizer` saves the produced plots under a filename compiled from the topic tree and the function name. This way, you can easily find the plot you are looking for and keep your project organized. 
+
+### Styles
+`stylernizer` uses `matplotlib` styles to define the appearance of the plots. You can define a base style for all plots and additional styles for specific cases such as full page plots, margin plots, etc. This way, you can easily change the appearance of all plots in your project by changing the base style.
 
 ## Installation
 
@@ -19,9 +27,12 @@ pip install git@github.com:JannisNe/stylernizer.git
     ├── __init__.py
     ├── topic1
     │   ├── __init__.py
-    │   ├── plot1.py
-    │   └── plot2.py
-    └── plot4.py
+    │   ├── topic1_1.py
+    │   └── topic1_2.py
+    ├── plotx.py
+    └── styles
+        ├── base.mplstyle
+        └── fullpage.mplstyle
 ```
 ### 1. Decorate the plotting functions with the `register` decorator.
 
@@ -33,13 +44,20 @@ For example, to register a plot in `plot1.py`:
     from stylernizer import register
     import matplotlib.pyplot as plt
 
-    @register()
-    def my_plot():
+    @register("fullpage", arg_loop=["log", "linear"])
+    def my_plot(scale: str):
         
         fig, ax = plt.subplots()
         ax.plot([1, 2, 3], [1, 2, 3])
+        ax.set_xscale(scale)
+        ax.set_yscale(scale)
         return fig
 ```
+
+`register()` takes three optional arguments:
+* `style_name`: `str` or `list[str]`; The style(s) to use for this plot in addition to the base style (see below). These must be importable by `matplotlib.style.use()` (see [this documentation](https://matplotlib.org/stable/users/explain/customizing.html#defining-your-own-style) for more info on style sheets). In this example, the plot will use the `topic1` style.
+* `arg_loop`: `Any` or `list[Any]`; The argument(s) to loop over when calling the function. This is useful when you want to create multiple plots with the same function but different arguments. In this example, the function will be called with `scale="log"` and `scale="linear"`. The ouput files will be named `project_topic1_topic1_1_my_plot_log.pdf` and `project_topic1_topic1_1_my_plot_linear.pdf`.
+* `orientation`: `str`; The orientation of the plot. Can be `landscape`, `portrait` or `square`. Defaults to `landscape`.
 
 ### 2. Run `stylernizer register` to register your package.
 
@@ -56,15 +74,15 @@ stylernizer run
 
 You can also produce a specific plot by providing the key of the plot:
 ```bash
-stylernizer run project.topic1.plot1:my_plot
+stylernizer run project.topic1.topic1_1:my_plot
 ```
 or a partial key:
 ```bash
-stylernizer run project.topic1.plot
+stylernizer run project.topic1.topic1_1
 ```
-The latter will match all keys starting with `project.topic1.plot`.
+The latter will match all keys starting with `project.topic1.topic1_1`.
 
-You can find the plot in the output directory under `project_topic1_plot1_my_plot.pdf`.
+You can find the plot in the output directory under `project_topic1_topic1_1_my_plot.pdf`.
 
 ## Configuration
 
