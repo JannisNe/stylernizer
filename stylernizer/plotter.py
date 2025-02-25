@@ -21,6 +21,7 @@ class Plotter:
 
     registry = {}
     registered_modules = []
+    registered_plots = []
     output_directory: Path = (
         Path(os.environ.get("STYLERNIZER_OUTPUT", "~/stylernizer"))
         .expanduser()
@@ -41,7 +42,9 @@ class Plotter:
 
     def load_cache(self):
         if self.cache_file.exists():
-            self.registered_modules = json.loads(self.cache_file.read_text())
+            cache = json.loads(self.cache_file.read_text())
+            self.registered_modules = cache["modules"]
+            self.registered_plots = cache["plots"]
             for m in self.registered_modules:
                 logger.debug(f"importing module {m}")
                 try:
@@ -50,7 +53,12 @@ class Plotter:
                     logger.error(f"could not import module {m}")
 
     def dump_cache(self):
-        self.cache_file.write_text(json.dumps(self.registered_modules))
+        self.cache_file.write_text(
+            json.dumps(
+                {"modules": self.registered_modules, "plots": self.registered_plots},
+                indent=4,
+            )
+        )
         logger.debug(f"dumped cache to {self.cache_file}")
 
     @classmethod
@@ -74,6 +82,9 @@ class Plotter:
                 raise ValueError("Function does not have a module name")
             if f.__module__ not in cls.registered_modules:
                 cls.registered_modules.append(f.__module__)
+            fname = f.__module__ + ":" + f.__name__
+            if fname not in cls.registered_plots:
+                cls.registered_plots.append(fname)
 
             def wrapper(*args, **kwargs):
                 logger.debug(f"using styles {styles}")
@@ -82,7 +93,6 @@ class Plotter:
                     cls.set_orientation(orientation)
                 return f(*args, **kwargs)
 
-            fname = f.__module__ + ":" + f.__name__
             if not arg_loop:
                 cls.registry[fname] = wrapper
             else:
