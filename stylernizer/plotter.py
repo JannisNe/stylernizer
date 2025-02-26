@@ -28,7 +28,7 @@ class Plotter:
         .resolve()
     )
     cache_file: Path = (
-        Path(os.environ.get("STYLERNIZER_CACHE", "./.stylernizer"))
+        Path(os.environ.get("STYLERNIZER_CACHE", "~/.stylernizer"))
         .expanduser()
         .resolve()
     )
@@ -80,9 +80,12 @@ class Plotter:
 
             if not hasattr(f, "__module__"):
                 raise ValueError("Function does not have a module name")
+            fname = f.__module__ + ":" + f.__name__
+            if f.__annotations__.get("return") is not plt.Figure:
+                raise ValueError(f"{fname} does not return a matplotlib Figure")
+
             if f.__module__ not in cls.registered_modules:
                 cls.registered_modules.append(f.__module__)
-            fname = f.__module__ + ":" + f.__name__
             if fname not in cls.registered_plots:
                 cls.registered_plots.append(fname)
 
