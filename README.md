@@ -47,7 +47,7 @@ For example, to register a plot in `plot1.py`:
 from stylernizer import register
 import matplotlib.pyplot as plt
 
-@register("fullpage", arg_loop=["log", "linear"])
+@register("project.styles.fullpage", arg_loop=["log", "linear"])
 def my_plot(scale: str):
     
     fig, ax = plt.subplots()
