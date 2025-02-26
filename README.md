@@ -44,17 +44,17 @@ If you have not run `stylernizer` for your plots yet, you need to register your 
 For example, to register a plot in `plot1.py`:
 
 ```python
-    from stylernizer import register
-    import matplotlib.pyplot as plt
+from stylernizer import register
+import matplotlib.pyplot as plt
 
-    @register("fullpage", arg_loop=["log", "linear"])
-    def my_plot(scale: str):
-        
-        fig, ax = plt.subplots()
-        ax.plot([1, 2, 3], [1, 2, 3])
-        ax.set_xscale(scale)
-        ax.set_yscale(scale)
-        return fig
+@register("fullpage", arg_loop=["log", "linear"])
+def my_plot(scale: str):
+    
+    fig, ax = plt.subplots()
+    ax.plot([1, 2, 3], [1, 2, 3])
+    ax.set_xscale(scale)
+    ax.set_yscale(scale)
+    return fig
 ```
 
 `register()` takes three optional arguments:
